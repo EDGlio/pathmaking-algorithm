@@ -21,6 +21,52 @@ map = [
   [empty, empty, empty, empty, empty, empty, empty, empty]
 ]
 
+HEIGHT, WIDTH = 400, 400
+RECT_HEIGHT, RECT_WIDTH = 50, 50
+FPS = 20
+
+WHITE = (255, 255, 255)
+BARRIER = (200, 50, 50)
+PATH = (0, 0, 0)
+
+pygame.init()
+screen = pygame.display.set_mode((HEIGHT, WIDTH))
+
+DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT))
+FPSCLOCK = pygame.time.Clock()
+
+# Renders all white tiles
+def render_all_white():
+  print('epic')
+  m, n = 8, 8
+  for i in range(m):
+    for j in range(n):
+      tile = pygame.Rect(j * RECT_WIDTH, i * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT)
+      pygame.draw.rect(DISPLAYSURF, WHITE, tile)
+      pygame.display.update()
+
+# Renders the map
+def render_map(map):
+  m, n = 8, 8
+  for i in range(m):
+    for j in range(n):
+      tile = pygame.Rect(j * RECT_WIDTH, i * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT)
+      val = map[i][j]
+      if val == barrier:
+        col = BARRIER
+      else:
+        col = (120 - (10 * val), (10 * val), (10 * val))
+      pygame.draw.rect(DISPLAYSURF, col, tile)
+      pygame.display.update()
+  return map
+
+# finds path using heat map
+def render_tile(pos, col):
+  tile = pygame.Rect(pos[1] * RECT_WIDTH, pos[0] * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT)
+  pygame.draw.rect(DISPLAYSURF, col, tile)
+  pygame.display.update()
+  print(pos)
+
 # finds path using heat map
 def find_path(heat_map, start_pos):
   run = True
@@ -31,33 +77,27 @@ def find_path(heat_map, start_pos):
   path = [current_pos]
   current_val = map[current_pos[1]][current_pos[0]]
   while run:
-    for i in range(1):
-      try:
-        if map[current_pos[0] + 1][current_pos[1]] == current_val - 1:
-          current_pos = [current_pos[0] + 1, current_pos[1]]
-          current_val = map[current_pos[0]][current_pos[1]]
-          break
-
-        if map[current_pos[0] - 1][current_pos[1]] == current_val - 1:
-          current_pos = [current_pos[0] - 1, current_pos[1]]
-          current_val = map[current_pos[0]][current_pos[1]]
-          break
-
-        if map[current_pos[0]][current_pos[1] + 1] == current_val - 1:
-          current_pos = [current_pos[0], current_pos[1] + 1]
-          current_val = map[current_pos[0]][current_pos[1]]
-          break
+    render_tile(current_pos, PATH)
+    time.sleep(0.5)
+    try:
+      if map[current_pos[0] + 1][current_pos[1]] == current_val - 1:
+        current_pos = [current_pos[0] + 1, current_pos[1]]
+        current_val = map[current_pos[0]][current_pos[1]]
+      elif map[current_pos[0] - 1][current_pos[1]] == current_val - 1:
+        current_pos = [current_pos[0] - 1, current_pos[1]]
+        current_val = map[current_pos[0]][current_pos[1]]
+      elif map[current_pos[0]][current_pos[1] + 1] == current_val - 1:
+        current_pos = [current_pos[0], current_pos[1] + 1]
+        current_val = map[current_pos[0]][current_pos[1]]
+      elif map[current_pos[0]][current_pos[1] - 1] == current_val - 1:
+        current_pos = [current_pos[0], current_pos[1] - 1]
+        current_val = map[current_pos[0]][current_pos[1]]
         
-        if map[current_pos[0]][current_pos[1] - 1] == current_val - 1:
-          current_pos = [current_pos[0], current_pos[1] - 1]
-          current_val = map[current_pos[0]][current_pos[1]]
-          break
-          
-      except: pass
+    except: pass
     path.append(current_pos)
     if current_val == 0:
       run = False
-    #print(path)
+  render_tile(current_pos, PATH)
   return path
 
 def heat_map(map, endPos):
@@ -88,3 +128,17 @@ def heat_map(map, endPos):
     if not any(empty in x for x in map):
       run = False
   return map
+
+map = render_map(heat_map(map, endPos))
+
+time.sleep(4)
+print('gogogo')
+find_path(map, (1, 1))
+
+
+while True:
+  for event in pygame.event.get():
+    if event.type == pygame.QUIT:
+      pygame.quit()
+  FPSCLOCK.tick(FPS)
+  pygame.display.update()
