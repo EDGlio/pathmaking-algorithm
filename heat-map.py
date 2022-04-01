@@ -21,7 +21,44 @@ map = [
   [empty, empty, empty, empty, empty, empty, empty, empty]
 ]
 
+# finds path using heat map
+def find_path(heat_map, start_pos):
+  run = True
+  # current position
+  current_pos = start_pos
 
+  # path that will be appended to
+  path = [current_pos]
+  current_val = map[current_pos[1]][current_pos[0]]
+  while run:
+    for i in range(1):
+      try:
+        if map[current_pos[0] + 1][current_pos[1]] == current_val - 1:
+          current_pos = [current_pos[0] + 1, current_pos[1]]
+          current_val = map[current_pos[0]][current_pos[1]]
+          break
+
+        if map[current_pos[0] - 1][current_pos[1]] == current_val - 1:
+          current_pos = [current_pos[0] - 1, current_pos[1]]
+          current_val = map[current_pos[0]][current_pos[1]]
+          break
+
+        if map[current_pos[0]][current_pos[1] + 1] == current_val - 1:
+          current_pos = [current_pos[0], current_pos[1] + 1]
+          current_val = map[current_pos[0]][current_pos[1]]
+          break
+        
+        if map[current_pos[0]][current_pos[1] - 1] == current_val - 1:
+          current_pos = [current_pos[0], current_pos[1] - 1]
+          current_val = map[current_pos[0]][current_pos[1]]
+          break
+          
+      except: pass
+    path.append(current_pos)
+    if current_val == 0:
+      run = False
+    #print(path)
+  return path
 
 def heat_map(map, endPos):
   pairs_to_check = []
