@@ -103,19 +103,18 @@ def find_path(heat_map, start_pos):
     render_tile(current_pos, PATH)
     time.sleep(0.5)
     try:
-      if map[current_pos[0] + 1][current_pos[1]] == current_val - 1:
+      if current_pos[0] != 7 and map[current_pos[0] + 1][current_pos[1]] == current_val - 1:
         current_pos = [current_pos[0] + 1, current_pos[1]]
         current_val = map[current_pos[0]][current_pos[1]]
-      elif map[current_pos[0] - 1][current_pos[1]] == current_val - 1:
+      elif current_pos[0] != 0 and map[current_pos[0] - 1][current_pos[1]] == current_val - 1:
         current_pos = [current_pos[0] - 1, current_pos[1]]
         current_val = map[current_pos[0]][current_pos[1]]
-      elif map[current_pos[0]][current_pos[1] + 1] == current_val - 1:
+      elif current_pos[1] != 7 and map[current_pos[0]][current_pos[1] + 1] == current_val - 1:
         current_pos = [current_pos[0], current_pos[1] + 1]
         current_val = map[current_pos[0]][current_pos[1]]
-      elif map[current_pos[0]][current_pos[1] - 1] == current_val - 1:
+      elif current_pos[1] != 0 and map[current_pos[0]][current_pos[1] - 1] == current_val - 1:
         current_pos = [current_pos[0], current_pos[1] - 1]
-        current_val = map[current_pos[0]][current_pos[1]]
-        
+        current_val = map[current_pos[0]][current_pos[1]]        
         
     except: pass
     path.append(current_pos)
