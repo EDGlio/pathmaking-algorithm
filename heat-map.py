@@ -114,7 +114,8 @@ def find_path(heat_map, start_pos):
         current_val = map[current_pos[0]][current_pos[1]]
       elif current_pos[1] != 0 and map[current_pos[0]][current_pos[1] - 1] == current_val - 1:
         current_pos = [current_pos[0], current_pos[1] - 1]
-        current_val = map[current_pos[0]][current_pos[1]]        
+        current_val = map[current_pos[0]][current_pos[1]]
+        
         
     except: pass
     path.append(current_pos)
@@ -159,7 +160,6 @@ def heat_map(map, endPos):
 map = render_map(heat_map(map, endPos))
 
 time.sleep(2)
-print('gogogo')
 find_path(map, (1, 1))
 
 
@@ -178,15 +178,15 @@ while True:
         map = white_map.copy()
       if event.key == pygame.K_RETURN:
         customize = False
-        print('potato')
-        render_map(heat_map(map, endPos))
-        print('pot')
+        map = render_map(heat_map(map, endPos))
+      if event.key == pygame.K_p and customize == False:
+        find_path(map, (1, 1))
     if event.type == pygame.MOUSEBUTTONUP:    
       if customize == True:
         pos = [i//50 for i in pygame.mouse.get_pos()]
         map[pos[1]][pos[0]] = barrier
         pos.reverse()
         render_tile(pos, BARRIER)
-  
+        
   FPSCLOCK.tick(FPS)
   pygame.display.update()
