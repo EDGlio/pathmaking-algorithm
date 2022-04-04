@@ -3,17 +3,15 @@ import pygame
 from pygame.locals import *
 import time
 
-
-
-
 # Define variables
 empty = 500
 barrier = 1000
 endPos = (6, 6)
 
+
 ''' INIT VARIABLES '''
 
-HEIGHT, WIDTH = 400, 400
+HEIGHT, WIDTH = 800, 800
 RECT_HEIGHT, RECT_WIDTH = 50, 50
 FPS = 20
 GRID_DIMENSIONS = HEIGHT//RECT_HEIGHT
@@ -32,6 +30,8 @@ white_map[endPos[0]][endPos[1]] = 0
 WHITE = (255, 255, 255)
 BARRIER = (200, 50, 50)
 PATH = (0, 0, 0)
+TOP_COL = 240
+COL_INC = 120/GRID_DIMENSIONS
 
 ''' INITIALISATIONS '''
 
@@ -65,8 +65,10 @@ def render_map(map):
         col = BARRIER
       elif val == empty:
         col = WHITE
+      elif val > 2 * GRID_DIMENSIONS:
+        col = (0, 2 * TOP_COL - COL_INC * val, TOP_COL)
       else:
-        col = (150 - (10 * val), (10 * val), (10 * val))
+        col = (TOP_COL - (COL_INC * val), (COL_INC * val), (COL_INC * val))
       pygame.draw.rect(DISPLAYSURF, col, tile)
       pygame.display.update()
   return map
@@ -84,27 +86,27 @@ def find_path(heat_map, start_pos):
 
   # path that will be appended to
   path = [current_pos]
-  current_val = map[current_pos[0]][current_pos[1]]
+  current_val = heat_map[current_pos[0]][current_pos[1]]
   while run:
     render_tile(current_pos, PATH)
+    print(heat_map)
     time.sleep(0.5)
     try:
       # First checks that you cannot go outside the map
       # Then checks that you are going closer to the endpoint
       # Changes position to that coordinate, and get the value at that place
-      if current_pos[0] != 7 and map[current_pos[0] + 1][current_pos[1]] == current_val - 1:
+      if current_pos[0] != GRID_DIMENSIONS - 1 and heat_map[current_pos[0] + 1][current_pos[1]] == current_val - 1:
         current_pos = [current_pos[0] + 1, current_pos[1]]
-        current_val = map[current_pos[0]][current_pos[1]]
-      elif current_pos[0] != 0 and map[current_pos[0] - 1][current_pos[1]] == current_val - 1:
+        current_val = heat_map[current_pos[0]][current_pos[1]]
+      elif current_pos[0] != 0 and heat_map[current_pos[0] - 1][current_pos[1]] == current_val - 1:
         current_pos = [current_pos[0] - 1, current_pos[1]]
-        current_val = map[current_pos[0]][current_pos[1]]
-      elif current_pos[1] != 7 and map[current_pos[0]][current_pos[1] + 1] == current_val - 1:
+        current_val = heat_map[current_pos[0]][current_pos[1]]
+      elif current_pos[1] != GRID_DIMENSIONS - 1 and heat_map[current_pos[0]][current_pos[1] + 1] == current_val - 1:
         current_pos = [current_pos[0], current_pos[1] + 1]
-        current_val = map[current_pos[0]][current_pos[1]]
-      elif current_pos[1] != 0 and map[current_pos[0]][current_pos[1] - 1] == current_val - 1:
+        current_val = heat_map[current_pos[0]][current_pos[1]]
+      elif current_pos[1] != 0 and heat_map[current_pos[0]][current_pos[1] - 1] == current_val - 1:
         current_pos = [current_pos[0], current_pos[1] - 1]
-        current_val = map[current_pos[0]][current_pos[1]]
-        
+        current_val = heat_map[current_pos[0]][current_pos[1]]
         
     except: pass
     path.append(current_pos)
@@ -145,6 +147,12 @@ def heat_map(map, endPos):
       run = False
   return map
 
+# map = render_map(heat_map(map, endPos))
+# time.sleep(2)
+# find_path(map, (1, 1))
+
+
+
 ''' GAME LOOP '''
 
 # Enables customisation
@@ -159,20 +167,22 @@ while True:
         # Enables customisation
         # Turns map fully white (empty)
         customize = True
-        render_all_white()
-        map = white_map.copy()
+        # render_all_white()
+        map1 = []
+        map1 = white_map.copy()
+        map1 = render_map(map1)
       if event.key == pygame.K_RETURN: 
         # Disables customisation
         # renders the heat map of the customised map
         customize = False
-        map = render_map(heat_map(map, endPos))
+        map1 = render_map(heat_map(map1, endPos)).copy()
       if event.key == pygame.K_p and customize == False:
         # pathfinds the current heat map
-        find_path(map, (1, 1))
+        find_path(map1, (1, 1))
     if event.type == pygame.MOUSEBUTTONUP:    
       if customize == True:
         pos = [i//RECT_HEIGHT for i in pygame.mouse.get_pos()]
-        map[pos[1]][pos[0]] = barrier
+        map1[pos[1]][pos[0]] = barrier
         pos.reverse() # Pygame goes up to down, left to right
         render_tile(pos, BARRIER)
         
