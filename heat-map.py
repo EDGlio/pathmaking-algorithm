@@ -11,37 +11,21 @@ empty = 500
 barrier = 1000
 endPos = (6, 6)
 
-
-''' Sample Maps '''
-
-map = [
-  [empty, empty, empty, empty, empty, empty, empty, empty],
-  [empty, empty, barrier, barrier, empty, empty, empty, empty],
-  [empty, empty, barrier, empty, empty, empty, empty, empty],
-  [empty, empty, barrier, empty, empty, empty, empty, empty],
-  [empty, empty, barrier, empty, empty, empty, empty, empty],
-  [empty, empty, empty, empty, empty, empty, empty, empty],
-  [empty, empty, empty, empty, barrier, empty, 0, empty],
-  [empty, empty, empty, empty, empty, empty, empty, empty]
-]
-
-white_map = [
-  [empty, empty, empty, empty, empty, empty, empty, empty],
-  [empty, empty, empty, empty, empty, empty, empty, empty],
-  [empty, empty, empty, empty, empty, empty, empty, empty],
-  [empty, empty, empty, empty, empty, empty, empty, empty],
-  [empty, empty, empty, empty, empty, empty, empty, empty],
-  [empty, empty, empty, empty, empty, empty, empty, empty],
-  [empty, empty, empty, empty, empty, empty, 0, empty],
-  [empty, empty, empty, empty, empty, empty, empty, empty],
-]
-
 ''' INIT VARIABLES '''
 
 HEIGHT, WIDTH = 400, 400
 RECT_HEIGHT, RECT_WIDTH = 50, 50
 FPS = 20
-GRID_DIMENSIONS = HEIGHT/RECT_HEIGHT
+GRID_DIMENSIONS = HEIGHT//RECT_HEIGHT
+
+white_map = []
+
+for i in range(GRID_DIMENSIONS):
+  white_map.append([])
+  for j in range(GRID_DIMENSIONS):
+    white_map[i].append(empty)
+
+white_map[endPos[0]][endPos[1]] = 0
 
 ''' COLOURS '''
 
@@ -63,7 +47,7 @@ FPSCLOCK = pygame.time.Clock()
 # Renders all white tiles
 def render_all_white():
   print('epic')
-  m, n = 8, 8
+  m, n = GRID_DIMENSIONS, GRID_DIMENSIONS
   for i in range(m):
     for j in range(n):
       tile = pygame.Rect(j * RECT_WIDTH, i * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT)
@@ -72,7 +56,7 @@ def render_all_white():
 
 # Renders the map
 def render_map(map):
-  m, n = 8, 8
+  m, n = GRID_DIMENSIONS, GRID_DIMENSIONS
   for i in range(m):
     for j in range(n):
       tile = pygame.Rect(j * RECT_WIDTH, i * RECT_HEIGHT, RECT_WIDTH, RECT_HEIGHT)
@@ -160,12 +144,6 @@ def heat_map(map, endPos):
     if not any(empty in x for x in map):
       run = False
   return map
-
-map = render_map(heat_map(map, endPos))
-
-time.sleep(2)
-find_path(map, (1, 1))
-
 
 ''' GAME LOOP '''
 
